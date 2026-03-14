@@ -1,0 +1,232 @@
+const fs = require('fs');
+const path = require('path');
+
+const DOMAIN = 'https://bestmayongtantrikk.com';
+const PHONE = '+91 6901842322';
+const EMAIL = 'aadarshaacharya@gmail.com';
+const ADDRESS = 'Mayong, Assam, 782411';
+
+const commonHeader = `
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-slate-900 border-b border-orange-900 bg-opacity-95 backdrop-blur-sm shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-3 md:space-x-4">
+                    <a href="index.html" class="flex items-center space-x-3 md:space-x-4">
+                        <img src="./images/logo.png" alt="Aadarsh Aacharya Logo" class="h-12 w-12 rounded-full border border-orange-500 shadow-[0_0_15px_rgba(234,88,12,0.5)]">
+                        <span class="font-serif font-bold text-xl md:text-2xl text-orange-400 tracking-wide">Aadarsh Aacharya</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-slate-300 hover:text-orange-400 font-medium transition-colors">Home</a>
+                    <a href="about.html" class="text-slate-300 hover:text-orange-400 font-medium transition-colors">About</a>
+                    <a href="services.html" class="text-slate-300 hover:text-orange-400 font-medium transition-colors">Services</a>
+                    <a href="contact.html" class="text-slate-300 hover:text-orange-400 font-medium transition-colors">Contact</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <a href="tel:${PHONE.replace(/\s/g, '')}" class="bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">Call Now</a>
+                </div>
+            </div>
+        </div>
+    </header>
+`;
+
+const commonFooter = `
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 pt-16 pb-8 mt-auto relative overflow-hidden z-10">
+        <div class="absolute w-[300vw] h-[300vh] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[-1] opacity-[0.20] pointer-events-none mix-blend-screen animate-[pulse_6s_ease-in-out_infinite] animate-[spin_180s_linear_infinite]" style="background-image: url('./images/mandala.png'); background-size: 400px; background-repeat: repeat;"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-orange-900/10 via-slate-950/80 to-slate-950 z-[-1] pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+             <div class="mb-8">
+                <a href="index.html" class="inline-flex items-center space-x-3 mb-6">
+                    <img src="./images/logo.png" alt="Logo" class="h-10 w-10 rounded-full border border-orange-500">
+                    <span class="font-serif font-bold text-xl text-orange-400">Aadarsh Aacharya</span>
+                </a>
+                <div class="flex flex-wrap justify-center gap-6 mb-8 text-slate-400">
+                    <a href="index.html" class="hover:text-orange-400">Home</a>
+                    <a href="services.html" class="hover:text-orange-400">Services</a>
+                    <a href="contact.html" class="hover:text-orange-400">Contact</a>
+                    <a href="best-mayong-tantrik.html" class="hover:text-orange-400">Mayong Tantrik</a>
+                </div>
+            </div>
+            <p class="text-slate-500 text-sm">© 2026 Aadarsh Aacharya. Mayong, Assam. All Rights Reserved.</p>
+        </div>
+    </footer>
+`;
+
+function generatePage(config) {
+    const { filename, title, description, h1, keyword, content, faq } = config;
+    
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Aadarsh Aacharya - Best Mayong Tantrik",
+        "image": `${DOMAIN}/images/logo.png`,
+        "@id": `${DOMAIN}/${filename}`,
+        "url": `${DOMAIN}/${filename}`,
+        "telephone": PHONE,
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Mayong",
+            "addressLocality": "Mayong",
+            "addressRegion": "Assam",
+            "postalCode": "782411",
+            "addressCountry": "IN"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 26.2284,
+            "longitude": 92.0003
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "00:00",
+            "closes": "23:59"
+        }
+    };
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    <meta name="description" content="${description}">
+    <link rel="canonical" href="${DOMAIN}/${filename}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${description}">
+    <meta property="og:url" content="${DOMAIN}/${filename}">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="${DOMAIN}/images/religious.png">
+
+    <!-- Schema -->
+    <script type="application/ld+json">
+    ${JSON.stringify(schema)}
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class="bg-brand-bg text-slate-100 font-sans flex flex-col min-h-screen">
+    ${commonHeader}
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative py-20 overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="./images/hero_bg.png" alt="Spiritual Background" class="w-full h-full object-cover opacity-30">
+                <div class="absolute inset-0 bg-gradient-to-b from-slate-900 via-transparent to-slate-900"></div>
+            </div>
+            <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold text-orange-400 mb-6 leading-tight">${h1}</h1>
+                <p class="text-xl text-slate-300 mb-10">${description}</p>
+                <a href="tel:${PHONE.replace(/\s/g, '')}" class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-10 rounded-full transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(234,88,12,0.4)]">
+                    Connect with Expert Now
+                </a>
+            </div>
+        </section>
+
+        <!-- Content Section -->
+        <section class="py-16 bg-slate-900/50 relative overflow-hidden">
+             <!-- Spiritual Background -->
+            <div class="absolute inset-0 z-[-1] opacity-[0.15] pointer-events-none mix-blend-screen animate-[spin_300s_linear_infinite]" style="background-image: url('./images/mandala.png'); background-size: 600px; background-repeat: repeat;"></div>
+            
+            <div class="max-w-4xl mx-auto px-4 prose prose-invert prose-orange lg:prose-xl">
+                <div class="text-slate-300 leading-relaxed space-y-8">
+                    ${content}
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-16 border-t border-orange-900/30">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-3xl font-serif font-bold text-orange-400 mb-8 text-center">Search Queries & FAQ</h2>
+                <div class="space-y-6">
+                    ${faq.map(f => `
+                        <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 hover:border-orange-500/30 transition-all">
+                            <h3 class="text-lg font-bold text-orange-200 mb-2">${f.q}</h3>
+                            <p class="text-slate-400">${f.a}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+
+        <!-- CTAs / Links -->
+        <section class="py-16 text-center">
+            <h2 class="text-2xl font-serif text-slate-400 mb-8 italic">Other Important Spiritual Services</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="services.html" class="text-orange-400 underline decoration-orange-900 hover:decoration-orange-400 px-4 py-2">Our Services</a>
+                <a href="contact.html" class="text-orange-400 underline decoration-orange-900 hover:decoration-orange-400 px-4 py-2">Contact Aadarsh Aacharya</a>
+                <a href="black-magic-removal-assam.html" class="text-orange-400 underline decoration-orange-900 hover:decoration-orange-400 px-4 py-2">Black Magic Removal</a>
+                <a href="love-problem-solution-mayong.html" class="text-orange-400 underline decoration-orange-900 hover:decoration-orange-400 px-4 py-2">Love Solutions</a>
+            </div>
+        </section>
+    </main>
+
+    ${commonFooter}
+</body>
+</html>`;
+    return html;
+}
+
+// 1. best-mayong-tantrik.html
+const p1 = generatePage({
+    filename: 'best-mayong-tantrik.html',
+    title: 'Best Mayong Tantrik | Aadarsh Aacharya | Real Tantra in Assam',
+    description: 'Looking for the best Mayong tantrik? Aadarsh Aacharya provides genuine, traditional spiritual healing from the heart of Mayong, Assam.',
+    h1: 'The Best Mayong Tantrik: Traditional Spiritual Wisdom',
+    content: `
+        <p>Mayong, a small village located in the Morigaon district of Assam, has been whispered about in legends for centuries. Known as the "Cradle of Black Magic," this mystical place is the historical heart of Indian Tantra and occult sciences. If you are searching for the <strong>best Mayong tantrik</strong>, you are essentially looking for an expert who understands the profound cultural legacy and the deep spiritual vibrations of this land.</p>
+        
+        <h2>The Tradition of Mayong Tantra</h2>
+        <p>Tantra in Mayong is not merely a set of rituals; it is a way of life that dates back thousands of years. The practitioners here, including Aadarsh Aacharya, come from lineages that have preserved the ancient secrets of spiritual protection, relationship harmony, and personal growth. Unlike many modern misconceptions, the true essence of Mayong's wisdom is rooted in the "Atharva Veda," focusing on healing and the well-being of humanity.</p>
+        
+        <h2>How Aadarsh Aacharya Can Help You</h2>
+        <p>When you face obstacles that seem insurmountable—whether it's a sudden loss in business, a breakdown in a loving relationship, or a feeling of constant negativity—the guidance of a <strong>best mayong tantrik</strong> can provide the missing link. Aadarsh Aacharya uses a combination of deep meditation, vedic mantras, and traditional spiritual remedies to address the root cause of your problems.</p>
+        
+        <h2>Spiritual Solutions for Modern Problems</h2>
+        <p>In today's fast-paced world, we often lose touch with the spiritual energies that govern our environment. Aadarsh Aacharya specializes in bringing this spiritual alignment back to your life. From <strong>love problem solution in mayong</strong> to complex business growth obstacles, every solution is tailored to your specific energy signature. The history of Mayong teaches us that there is more to this world than what we see, and with the right expert, you can harness these unseen forces for your benefit.</p>
+    `,
+    faq: [
+        { q: "Who is the most famous tantrik in Mayong?", a: "Aadarsh Aacharya is widely recognized as a leading expert in traditional Mayong tantra, known for his compassionate guidance and traditional remedies." },
+        { q: "Is Mayong Tantra safe?", a: "Yes, true Tantra practiced by experts like Aadarsh Aacharya is focused on positive healing and protection. It is entirely safe for everyone involved." },
+        { q: "Can a tantrik solve relationship problems?", a: "Many specialized rituals in Mayong tantra are designed to remove misunderstandings and attract positive vibrations between partners." }
+    ]
+});
+
+// 2. black-magic-removal-assam.html
+const p2 = generatePage({
+    filename: 'black-magic-removal-assam.html',
+    title: 'Black Magic Removal in Assam | Expert Tantrik Aadarsh Aacharya',
+    description: 'Protect yourself with professional black magic removal in Assam. Authentic spiritual protection and energy cleansing by Aadarsh Aacharya.',
+    h1: 'Genuine Black Magic Removal in Assam',
+    content: `
+        <p>The presence of negative energy or "black magic" can disrupt a person's life in ways that are hard to explain through conventional means. If you feel a constant sense of dread, experience recurring bad luck, or have sudden physical ailments that doctors cannot diagnose, you might need a professional for <strong>black magic removal in Assam</strong>. Aadarsh Aacharya, with his deep roots in Mayong, is a specialist in identifying and neutralizing these negative forces.</p>
+        
+        <h2>Symptoms of Negative Energy Influence</h2>
+        <p>Negative spiritual influences often manifest slowly. Common signs include extreme fatigue, consistent nightmares, sudden violent behavior in a peaceful home, or a feeling of being watched. In the cultural context of Assam, these symptoms have long been treated through spiritual intervention and cleansing rituals. <strong>Ojha tantrik</strong> experts like Aadarsh Aacharya have the sensitivity to detect these energetic shifts and provide immediate relief.</p>
+        
+        <h2>The Process of Spiritual Cleansing</h2>
+        <p>Removing black magic is a process of deep purification. Aadarsh Aacharya begins with an energy assessment, identifying whether the negativity is internal (personal blockage) or external (intended harm). Following this, a series of traditional protection rituals are performed. This might include the use of sacred yantras, specific mantras for the goddess Bagalamukhi, or the application of energized elements to create a shield around the individual and their home.</p>
+        
+        <h2>Protection and Future Preservation</h2>
+        <p>Successful <strong>black magic removal</strong> is not just about clearing the current issue; it's about building a spiritual immune system. Aadarsh Aacharya provides patients with simple daily practices and protective symbols that prevent future spiritual attacks. If you are searching for a "best mayong tantrik" to secure your peace of mind, expert intervention is the most reliable path toward safety.</p>
+    `,
+    faq: [
+        { q: "How do I know if I have black magic?", a: "Unexplained failures, sudden health decline, and consistent negative thoughts are often signs of spiritual blockages that need assessment." },
+        { q: "How long does it take to remove black magic?", a: "Recovery times vary, but most clients feel a significant weight lifted immediately after the first cleansing session." },
+        { q: "Is black magic removal permanent?", a: "With the protective measures and advice provided by Aadarsh Aacharya, you can ensure long-term spiritual safety." }
+    ]
+});
+
+fs.writeFileSync('best-mayong-tantrik.html', p1);
+fs.writeFileSync('black-magic-removal-assam.html', p2);
+console.log('Generated first batch of SEO pages.');
