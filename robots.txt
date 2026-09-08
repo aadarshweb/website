@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /node_modules/
+Disallow: /css/
+Disallow: /fix_seo.ps1
+Disallow: /replace.js
+Disallow: /replace_wa.js
+Disallow: /input.css
 
 Sitemap: https://bestmayongtantrikk.com/sitemap.xml
